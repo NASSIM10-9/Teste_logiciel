@@ -50,6 +50,12 @@ public class NavigationStepDefinitions {
 
     @Quand("^J'essaie de cliquer sur un élément du menu sans l'ouvrir$")
     public void j_essaie_de_cliquer_sur_un_element_du_menu_sans_l_ouvrir() {
+        // Initialiser productPage si nécessaire
+        if (productPage == null) {
+            TestContext.loginAndNavigateToProducts();
+            productPage = TestContext.getProductPage();
+            initialUrl = productPage.getCurrentUrl();
+        }
         // Essayer de cliquer sur About sans ouvrir le menu
         try {
             productPage.clickAbout();

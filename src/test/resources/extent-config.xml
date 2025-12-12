@@ -13,11 +13,18 @@
         <!-- Timestamp format -->
         <timeStampFormat>MMM dd, yyyy HH:mm:ss</timeStampFormat>
         
+        <!-- Enable screenshots in the report -->
+        <enableScreenshots>true</enableScreenshots>
+        
+        <!-- Screenshot folder path -->
+        <screenshotFolder>./</screenshotFolder>
+        
         <!-- Custom CSS -->
         <css>
             .nav-wrapper { background-color: #1e88e5 !important; }
             .brand-logo { color: white !important; }
             .nav-wrapper > ul > li.active > a { background-color: rgba(0,0,0,0.1) !important; }
+            .test-steps img { max-width: 100%; height: auto; border: 1px solid #ddd; margin: 10px 0; }
         </css>
         
         <!-- Custom JavaScript -->

@@ -67,8 +67,10 @@ public class Hooks {
                         String relativePath = screenshotFile.getName();
                         Hooks.scenario.fail(errorMessage,
                                 MediaEntityBuilder.createScreenCaptureFromPath(relativePath).build());
+                        System.out.println("Screenshot d'échec ajouté au rapport: " + relativePath);
                     } else {
                         Hooks.scenario.fail(errorMessage + "\nScreenshot file not found: " + screenshotPath);
+                        System.err.println("Fichier screenshot introuvable: " + screenshotPath);
                     }
                 } catch (Exception e) {
                     Hooks.scenario
@@ -78,6 +80,7 @@ public class Hooks {
                 }
             } else {
                 Hooks.scenario.fail(errorMessage);
+                System.out.println("Pas de screenshot d'échec disponible");
             }
         } else {
             if (!screenshotPath.isEmpty()) {

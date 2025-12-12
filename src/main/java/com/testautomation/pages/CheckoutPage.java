@@ -3,47 +3,58 @@ package com.testautomation.pages;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 
 public class CheckoutPage extends BasePage {
-    
+
     // Checkout Step One - Information
     @FindBy(id = "first-name")
     private WebElement firstNameInput;
-    
+
     @FindBy(id = "last-name")
     private WebElement lastNameInput;
-    
+
     @FindBy(id = "postal-code")
     private WebElement postalCodeInput;
-    
+
     @FindBy(css = "[data-test='continue']")
     private WebElement continueButton;
-    
+
     @FindBy(css = "[data-test='cancel']")
     private WebElement cancelButton;
-    
+
     // Checkout Step Two - Overview
     @FindBy(css = "[data-test='finish']")
     private WebElement finishButton;
-    
+
+    @FindBy(id = "finish")
+    private WebElement finishButtonById;
+
+    @FindBy(xpath = "//button[contains(text(), 'Finish')]")
+    private WebElement finishButtonByText;
+
     @FindBy(className = "summary_subtotal_label")
     private WebElement subtotalLabel;
-    
+
     @FindBy(className = "summary_tax_label")
     private WebElement taxLabel;
-    
+
     @FindBy(className = "summary_total_label")
     private WebElement totalLabel;
-    
+
     // Checkout Complete
     @FindBy(className = "complete-header")
     private WebElement completeHeader;
-    
+
     @FindBy(className = "complete-text")
     private WebElement completeText;
-    
+
     @FindBy(css = "[data-test='error']")
     private WebElement errorMessage;
+
+    @FindBy(className = "error-message-container")
+    private WebElement errorMessageContainer;
 
     public CheckoutPage() {
         super();
@@ -69,10 +80,64 @@ public class CheckoutPage extends BasePage {
 
     public void clickContinue() {
         click(continueButton);
+        // Attendre que la page de checkout step two se charge
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     public void clickFinish() {
-        click(finishButton);
+        // Ajouter un délai pour s'assurer que la page est chargée
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        // Essayer d'abord avec le sélecteur par data-test
+        try {
+            if (finishButton != null && finishButton.isDisplayed()) {
+                click(finishButton);
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println("Impossible de cliquer avec [data-test='finish']: " + e.getMessage());
+        }
+
+        // Essayer avec l'ID
+        try {
+            if (finishButtonById != null && finishButtonById.isDisplayed()) {
+                click(finishButtonById);
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println("Impossible de cliquer avec id='finish': " + e.getMessage());
+        }
+
+        // Essayer avec le texte du bouton
+        try {
+            if (finishButtonByText != null && finishButtonByText.isDisplayed()) {
+                click(finishButtonByText);
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println("Impossible de cliquer avec xpath text: " + e.getMessage());
+        }
+
+        // Essayer en trouvant directement l'élément et utiliser JavaScript
+        try {
+            WebElement button = driver.findElement(By.cssSelector("[data-test='finish'], #finish, button[type='submit']"));
+            if (button != null) {
+                JavascriptExecutor js = (JavascriptExecutor) driver;
+                js.executeScript("arguments[0].click();", button);
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println("Impossible de cliquer le bouton Finish: " + e.getMessage());
+            throw new RuntimeException("Le bouton Finish n'a pas pu être cliqué", e);
+        }
     }
 
     public void clickCancel() {
@@ -88,7 +153,33 @@ public class CheckoutPage extends BasePage {
     }
 
     public boolean isErrorMessageDisplayed() {
-        return isElementDisplayed(errorMessage);
+        try {
+            // Essayer d'abord avec data-test='error'
+            if (isElementDisplayed(errorMessage)) {
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("data-test='error' non trouvé, essai d'autres sélecteurs");
+        }
+
+        try {
+            // Essayer avec la classe error-message-container
+            if (isElementDisplayed(errorMessageContainer)) {
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("error-message-container non trouvé");
+        }
+
+        try {
+            // Essayer avec une classe commune pour les messages d'erreur
+            WebElement errorByClass = driver.findElement(By.cssSelector(".error-message-container, h3[data-test]"));
+            return errorByClass != null && errorByClass.isDisplayed();
+        } catch (Exception e) {
+            System.out.println("Aucun message d'erreur trouvé avec les sélecteurs courants");
+        }
+
+        return false;
     }
 
     public String getErrorMessage() {
@@ -111,4 +202,3 @@ public class CheckoutPage extends BasePage {
         return driver.getCurrentUrl().contains("/checkout-complete.html");
     }
 }
-
