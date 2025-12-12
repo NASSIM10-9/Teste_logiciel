@@ -17,22 +17,22 @@ public class ScreenshotUtil {
 
     public static String takeScreenshot(WebDriver driver, String testName) {
         try {
-            // Créer le dossier screenshots s'il n'existe pas
+
             Path screenshotPath = Paths.get(SCREENSHOT_DIR);
             if (!Files.exists(screenshotPath)) {
                 Files.createDirectories(screenshotPath);
             }
 
-            // Prendre la capture d'écran
+
             TakesScreenshot takesScreenshot = (TakesScreenshot) driver;
             File sourceFile = takesScreenshot.getScreenshotAs(OutputType.FILE);
 
-            // Générer un nom de fichier unique
+
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
             String fileName = testName + "_" + timestamp + ".png";
             String filePath = SCREENSHOT_DIR + File.separator + fileName;
 
-            // Copier le fichier
+
             File destinationFile = new File(filePath);
             Files.copy(sourceFile.toPath(), destinationFile.toPath());
 

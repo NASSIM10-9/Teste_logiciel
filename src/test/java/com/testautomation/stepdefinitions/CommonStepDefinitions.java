@@ -5,73 +5,79 @@ import com.testautomation.base.TestBase;
 import com.testautomation.pages.CheckoutPage;
 import com.testautomation.pages.LoginPage;
 import com.testautomation.utils.TestContext;
-import io.cucumber.java.fr.Et;
-import io.cucumber.java.fr.Soit;
-import org.junit.Assert;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.And;
+import org.junit.jupiter.api.Assertions;
 
 public class CommonStepDefinitions {
+    private CheckoutPage checkoutPage = new CheckoutPage();
+    private LoginPage loginPage = new LoginPage();
     
-    @Soit("^Je suis connecté et sur la page des produits$")
+    @Given("Je suis connecté et sur la page des produits")
     public void je_suis_connecte_et_sur_la_page_des_produits() {
-        TestContext.loginAndNavigateToProducts();
-        Assert.assertTrue("Doit être sur la page produits", 
-            TestContext.getProductPage().isProductPageDisplayed());
-    }
-
-    @Et("^Un message d'erreur doit être affiché$")
-    public void un_message_d_erreur_doit_etre_affiche() {
         try {
-            // Vérifier le contexte : login ou checkout
-            String currentUrl = TestBase.getDriver().getCurrentUrl();
-            
-            if (currentUrl.contains("checkout")) {
-                // Contexte checkout
-                CheckoutPage checkoutPage = new CheckoutPage();
-                Assert.assertTrue("Un message d'erreur doit être affiché sur la page checkout",
-                    checkoutPage.isErrorMessageDisplayed());
-                Hooks.scenario.log(Status.PASS, "Message d'erreur affiché sur la page checkout");
-            } else {
-                // Contexte login (par défaut)
-                LoginPage loginPage = new LoginPage();
-                Assert.assertTrue("Un message d'erreur doit être affiché sur la page login",
-                    loginPage.isErrorMessageDisplayed());
-                Hooks.scenario.log(Status.PASS, "Message d'erreur affiché sur la page login");
-            }
-        } catch (AssertionError e) {
-            Hooks.scenario.log(Status.FAIL, "Message d'erreur non affiché: " + e.getMessage());
-            throw e;
+            TestContext.loginAndNavigateToProducts();
+            Assertions.assertTrue(TestContext.getProductPage().isProductPageDisplayed(), "Doit être sur la page produits");
+            Hooks._scenario.log(Status.PASS, "Navigation page produits réussie");
+        } catch (Throwable t) {
+            Hooks._scenario.log(Status.FAIL, "Echec navigation page produits");
+            Hooks._scenario.log(Status.FAIL, t.getMessage());
+            throw t;
         }
     }
 
-    @Et("^Le message doit contenir \"([^\"]*)\"$")
+    @And("Un message d'erreur doit être affiché")
+    public void un_message_d_erreur_doit_etre_affiche() {
+        try {
+
+            String currentUrl = TestBase.getDriver().getCurrentUrl();
+            
+            if (currentUrl.contains("checkout")) {
+
+
+                Assertions.assertTrue(checkoutPage.isErrorMessageDisplayed(), "Un message d'erreur doit être affiché sur la page checkout");
+                Hooks._scenario.log(Status.PASS, "Message d'erreur affiché sur la page checkout");
+            } else {
+
+
+                Assertions.assertTrue(loginPage.isErrorMessageDisplayed(), "Un message d'erreur doit être affiché sur la page login");
+                Hooks._scenario.log(Status.PASS, "Message d'erreur affiché sur la page login");
+            }
+        } catch (Throwable t) {
+            Hooks._scenario.log(Status.FAIL, "Message d'erreur non affiché");
+            Hooks._scenario.log(Status.FAIL, t.getMessage());
+            throw t;
+        }
+    }
+
+    @And("Le message doit contenir {string}")
     public void le_message_doit_contenir(String expectedMessage) {
         try {
-            // Vérifier le contexte : login ou checkout
+
             String currentUrl = TestBase.getDriver().getCurrentUrl();
             String actualMessage;
             
             if (currentUrl.contains("checkout")) {
-                // Contexte checkout
-                CheckoutPage checkoutPage = new CheckoutPage();
+
+
                 if (checkoutPage.isErrorMessageDisplayed()) {
                     actualMessage = checkoutPage.getErrorMessage();
-                    Assert.assertTrue("Le message doit contenir: " + expectedMessage,
-                        actualMessage.contains(expectedMessage));
-                    Hooks.scenario.log(Status.PASS, "Le message checkout contient: " + expectedMessage);
+                    Assertions.assertTrue(actualMessage.contains(expectedMessage), "Le message doit contenir: " + expectedMessage);
+                    Hooks._scenario.log(Status.PASS, "Le message checkout contient: " + expectedMessage);
                 } else {
-                    Assert.fail("Aucun message d'erreur affiché sur la page checkout");
+                    Assertions.fail("Aucun message d'erreur affiché sur la page checkout");
                 }
             } else {
-                // Contexte login (par défaut)
-                LoginPage loginPage = new LoginPage();
+
+
                 actualMessage = loginPage.getErrorMessage();
-                Assert.assertTrue("Le message doit contenir: " + expectedMessage,
-                    actualMessage.contains(expectedMessage));
-                Hooks.scenario.log(Status.PASS, "Le message login contient: " + expectedMessage);
+                Assertions.assertTrue(actualMessage.contains(expectedMessage), "Le message doit contenir: " + expectedMessage);
+                Hooks._scenario.log(Status.PASS, "Le message login contient: " + expectedMessage);
             }
-        } catch (AssertionError e) {
-            Hooks.scenario.log(Status.FAIL, "Le message ne contient pas '" + expectedMessage + "': " + e.getMessage());
-            throw e;
+        } catch (Throwable t) {
+            Hooks._scenario.log(Status.FAIL, "Le message ne contient pas '" + expectedMessage + "'");
+            Hooks._scenario.log(Status.FAIL, t.getMessage());
+            throw t;
         }
     }
 }

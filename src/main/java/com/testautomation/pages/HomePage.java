@@ -6,8 +6,7 @@ import org.openqa.selenium.support.FindBy;
 
 public class HomePage extends BasePage {
     
-    // Cette page représente la page de login de saucedemo
-    // Après login, on utilise ProductPage
+
     
     @FindBy(className = "login_logo")
     private WebElement loginLogo;

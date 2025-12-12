@@ -17,13 +17,13 @@ import java.io.File;
 public class Hooks {
 
     private static ExtentReports extent;
-    public static ExtentTest scenario;
+    public static ExtentTest _scenario;
 
     @Before
     public void setUp(Scenario scenario) {
         extent = ExtentManager.getInstance();
 
-        Hooks.scenario = extent.createTest(scenario.getName());
+        Hooks._scenario = extent.createTest(scenario.getName());
 
         if (TestBase.getDriver() == null) {
             TestBase.getDriver();
@@ -32,7 +32,6 @@ public class Hooks {
 
     @After
     public void tearDown(Scenario scenario) {
-        // Always capture screenshot regardless of pass/fail
         byte[] screenshotBytes = null;
         String screenshotPath = "";
 
@@ -42,10 +41,10 @@ public class Hooks {
                 TakesScreenshot ts = (TakesScreenshot) driver;
                 screenshotBytes = ts.getScreenshotAs(OutputType.BYTES);
 
-                // Save screenshot to file
+
                 screenshotPath = TestBase.captureScreenshot(scenario.getName());
 
-                // Embed screenshot into Cucumber report
+
                 if (screenshotBytes != null && screenshotBytes.length > 0) {
                     scenario.attach(screenshotBytes, "image/png", "Screenshot");
                 }
@@ -55,55 +54,45 @@ public class Hooks {
             e.printStackTrace();
         }
 
-        // Attach screenshot to ExtentReports using file path
         if (scenario.isFailed()) {
             String errorMessage = "Test Failed - See step details above for error information";
-
+            
             if (!screenshotPath.isEmpty()) {
                 try {
                     File screenshotFile = new File(screenshotPath);
                     if (screenshotFile.exists()) {
-                        // Use relative path from report location (just filename since both are in target/)
                         String relativePath = screenshotFile.getName();
-                        Hooks.scenario.fail(errorMessage,
+                        Hooks._scenario.fail(errorMessage,
                                 MediaEntityBuilder.createScreenCaptureFromPath(relativePath).build());
                         System.out.println("Screenshot d'échec ajouté au rapport: " + relativePath);
                     } else {
-                        Hooks.scenario.fail(errorMessage + "\nScreenshot file not found: " + screenshotPath);
-                        System.err.println("Fichier screenshot introuvable: " + screenshotPath);
+                        Hooks._scenario.fail(errorMessage + "\nScreenshot file not found: " + screenshotPath);
                     }
                 } catch (Exception e) {
-                    Hooks.scenario
-                            .fail(errorMessage + "\nScreenshot path: " + screenshotPath + "\nError: " + e.getMessage());
-                    System.err.println("Erreur lors de l'ajout du screenshot: " + e.getMessage());
-                    e.printStackTrace();
+                    Hooks._scenario.fail(errorMessage + "\nError attaching screenshot: " + e.getMessage());
                 }
             } else {
-                Hooks.scenario.fail(errorMessage);
-                System.out.println("Pas de screenshot d'échec disponible");
+                Hooks._scenario.fail(errorMessage);
             }
         } else {
             if (!screenshotPath.isEmpty()) {
                 try {
                     File screenshotFile = new File(screenshotPath);
                     if (screenshotFile.exists()) {
-                        // Use relative path from report location (just filename since both are in target/)
                         String relativePath = screenshotFile.getName();
-                        Hooks.scenario.pass("Test Passed",
+                        Hooks._scenario.pass("Test Passed",
                                 MediaEntityBuilder.createScreenCaptureFromPath(relativePath).build());
                     } else {
-                        Hooks.scenario.pass("Test Passed - Screenshot file not found: " + screenshotPath);
+                        Hooks._scenario.pass("Test Passed - Screenshot file not found");
                     }
                 } catch (Exception e) {
-                    Hooks.scenario
-                            .pass("Test Passed - Screenshot path: " + screenshotPath + "\nError: " + e.getMessage());
-                    System.err.println("Erreur lors de l'ajout du screenshot: " + e.getMessage());
-                    e.printStackTrace();
+                    Hooks._scenario.pass("Test Passed - Error attaching screenshot: " + e.getMessage());
                 }
             } else {
-                Hooks.scenario.pass("Test Passed");
+                Hooks._scenario.pass("Test Passed");
             }
         }
+        
         extent.flush();
         TestBase.closeDriver();
     }

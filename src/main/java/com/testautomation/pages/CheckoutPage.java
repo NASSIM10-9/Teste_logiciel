@@ -8,7 +8,7 @@ import org.openqa.selenium.JavascriptExecutor;
 
 public class CheckoutPage extends BasePage {
 
-    // Checkout Step One - Information
+
     @FindBy(id = "first-name")
     private WebElement firstNameInput;
 
@@ -24,7 +24,7 @@ public class CheckoutPage extends BasePage {
     @FindBy(css = "[data-test='cancel']")
     private WebElement cancelButton;
 
-    // Checkout Step Two - Overview
+
     @FindBy(css = "[data-test='finish']")
     private WebElement finishButton;
 
@@ -43,7 +43,7 @@ public class CheckoutPage extends BasePage {
     @FindBy(className = "summary_total_label")
     private WebElement totalLabel;
 
-    // Checkout Complete
+
     @FindBy(className = "complete-header")
     private WebElement completeHeader;
 
@@ -81,22 +81,20 @@ public class CheckoutPage extends BasePage {
     public void clickContinue() {
         click(continueButton);
         // Attendre que la page de checkout step two se charge
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        // Attendre que la page de checkout step two se charge
+        org.openqa.selenium.support.ui.WebDriverWait wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, java.time.Duration.ofSeconds(10));
+        wait.until(org.openqa.selenium.support.ui.ExpectedConditions.urlContains("checkout-step-two.html"));
     }
 
     public void clickFinish() {
-        // Ajouter un délai pour s'assurer que la page est chargée
+
+        org.openqa.selenium.support.ui.WebDriverWait wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, java.time.Duration.ofSeconds(10));
+
         try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+           wait.until(org.openqa.selenium.support.ui.ExpectedConditions.urlContains("checkout-step-two.html"));
+        } catch (Exception e) {
         }
 
-        // Essayer d'abord avec le sélecteur par data-test
         try {
             if (finishButton != null && finishButton.isDisplayed()) {
                 click(finishButton);
@@ -106,7 +104,6 @@ public class CheckoutPage extends BasePage {
             System.out.println("Impossible de cliquer avec [data-test='finish']: " + e.getMessage());
         }
 
-        // Essayer avec l'ID
         try {
             if (finishButtonById != null && finishButtonById.isDisplayed()) {
                 click(finishButtonById);

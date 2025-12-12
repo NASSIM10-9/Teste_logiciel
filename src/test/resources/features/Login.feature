@@ -4,9 +4,11 @@ Feature: Connexion utilisateur
   Je veux pouvoir me connecter à mon compte
   Afin d'accéder à mes fonctionnalités personnalisées
 
+  Background:
+     Given Je suis sur la page de connexion
+
   @Valid @LoginValid
   Scenario: Connexion avec identifiants valides
-    Given Je suis sur la page de connexion
     When Je saisis le nom d'utilisateur "standard_user"
     And Je saisis le mot de passe "secret_sauce"
     And Je clique sur le bouton de connexion
@@ -15,7 +17,6 @@ Feature: Connexion utilisateur
 
   @Invalid @LoginInvalid1
   Scenario: Connexion avec mot de passe incorrect
-    Given Je suis sur la page de connexion
     When Je saisis le nom d'utilisateur "standard_user"
     And Je saisis le mot de passe "wrong_password"
     And Je clique sur le bouton de connexion
@@ -25,7 +26,6 @@ Feature: Connexion utilisateur
 
   @Invalid @LoginInvalid2
   Scenario: Connexion avec champs vides
-    Given Je suis sur la page de connexion
     When Je saisis le nom d'utilisateur ""
     And Je saisis le mot de passe ""
     And Je clique sur le bouton de connexion
@@ -35,7 +35,6 @@ Feature: Connexion utilisateur
 
   @Invalid @LoginInvalid3
   Scenario: Connexion avec utilisateur verrouillé
-    Given Je suis sur la page de connexion
     When Je saisis le nom d'utilisateur "locked_out_user"
     And Je saisis le mot de passe "secret_sauce"
     And Je clique sur le bouton de connexion

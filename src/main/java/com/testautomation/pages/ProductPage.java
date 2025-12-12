@@ -112,11 +112,9 @@ public class ProductPage extends BasePage {
     public void openBurgerMenu() {
         click(burgerMenuButton);
         // Attendre que le menu s'ouvre
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        // Attendre que le menu s'ouvre
+        org.openqa.selenium.support.ui.WebDriverWait wait = new org.openqa.selenium.support.ui.WebDriverWait(driver, java.time.Duration.ofSeconds(5));
+        wait.until(org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf(burgerMenu));
     }
 
     public void closeBurgerMenu() {

@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
         "junit:target/cucumber-reports/cucumber.xml"
     },
     monochrome = true,
-    tags = "@Filter or @Cart or @Login or @Navigation or @Checkout"
+    tags = "@Filter or @Cart or @Login or @Navigation or @Checkout or @ScreenshotDemo"
 )
 public class TestRunner {
 }

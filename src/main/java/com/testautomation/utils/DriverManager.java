@@ -48,7 +48,6 @@ public class DriverManager {
                 break;
         }
 
-        webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
         driver.set(webDriver);
     }

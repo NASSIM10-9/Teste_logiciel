@@ -1,84 +1,146 @@
 package com.testautomation.stepdefinitions;
 
+import com.aventstack.extentreports.Status;
 import com.testautomation.pages.CheckoutPage;
 import com.testautomation.pages.LoginPage;
 import com.testautomation.pages.ProductPage;
 import com.testautomation.pages.CartPage;
-import io.cucumber.java.fr.*;
-import org.junit.Assert;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Then;
+import org.junit.jupiter.api.Assertions;
 
 public class CheckoutStepDefinitions {
-    private CheckoutPage checkoutPage;
-    private LoginPage loginPage;
-    private ProductPage productPage;
-    private CartPage cartPage;
+    private CheckoutPage checkoutPage = new CheckoutPage();
+    private LoginPage loginPage = new LoginPage();
+    private ProductPage productPage = new ProductPage();
+    private CartPage cartPage = new CartPage();
 
-    @Soit("^Je suis connecté avec des articles dans le panier$")
+    @Given("Je suis connecté avec des articles dans le panier")
     public void je_suis_connecte_avec_des_articles_dans_le_panier() {
-        loginPage = new LoginPage();
-        loginPage.navigateToLogin();
-        loginPage.login("standard_user", "secret_sauce");
-        productPage = new ProductPage();
-        productPage.addFirstProductToCart();
-        productPage.clickCartIcon();
-        cartPage = new CartPage();
+        try {
+
+            loginPage.navigateToLogin();
+            loginPage.login("standard_user", "secret_sauce");
+
+            productPage.addFirstProductToCart();
+            productPage.clickCartIcon();
+
+            Hooks._scenario.log(Status.PASS, "Conditions initiales établies : connecté avec article au panier");
+        } catch (Exception e) {
+            Hooks._scenario.log(Status.FAIL, "Erreur lors de la mise en place des conditions initiales");
+            Hooks._scenario.log(Status.FAIL, e.getMessage());
+        }
     }
 
-    @Et("^Je suis sur la page de checkout$")
+    @And("Je suis sur la page de checkout")
     public void je_suis_sur_la_page_de_checkout() {
-        cartPage.clickCheckout();
-        checkoutPage = new CheckoutPage();
-        Assert.assertTrue("Doit être sur la page checkout step one", 
-            checkoutPage.isCheckoutStepOneDisplayed());
+        try {
+            cartPage.clickCheckout();
+
+            Assertions.assertTrue(checkoutPage.isCheckoutStepOneDisplayed(), "Doit être sur la page checkout step one");
+            Hooks._scenario.log(Status.PASS, "Page checkout step one affichée");
+        } catch (Throwable t) {
+            Hooks._scenario.log(Status.FAIL, "Echec navigation vers checkout step one");
+            Hooks._scenario.log(Status.FAIL, t.getMessage());
+            throw t;
+        }
     }
 
-    @Quand("^Je saisis le prénom \"([^\"]*)\"$")
+    @When("Je saisis le prénom {string}")
     public void je_saisis_le_prenom(String firstName) {
-        checkoutPage.enterFirstName(firstName);
+        try {
+            checkoutPage.enterFirstName(firstName);
+            Hooks._scenario.log(Status.PASS, "Prénom saisi: " + firstName);
+        } catch (Exception e) {
+            Hooks._scenario.log(Status.FAIL, "Erreur saisie prénom");
+            Hooks._scenario.log(Status.FAIL, e.getMessage());
+        }
     }
 
-    @Et("^Je saisis le nom \"([^\"]*)\"$")
+    @And("Je saisis le nom {string}")
     public void je_saisis_le_nom(String lastName) {
-        checkoutPage.enterLastName(lastName);
+        try {
+            checkoutPage.enterLastName(lastName);
+            Hooks._scenario.log(Status.PASS, "Nom saisi: " + lastName);
+        } catch (Exception e) {
+            Hooks._scenario.log(Status.FAIL, "Erreur saisie nom");
+            Hooks._scenario.log(Status.FAIL, e.getMessage());
+        }
     }
 
-    @Et("^Je saisis le code postal \"([^\"]*)\"$")
+    @And("Je saisis le code postal {string}")
     public void je_saisis_le_code_postal(String postalCode) {
-        checkoutPage.enterPostalCode(postalCode);
+        try {
+            checkoutPage.enterPostalCode(postalCode);
+            Hooks._scenario.log(Status.PASS, "Code postal saisi: " + postalCode);
+        } catch (Exception e) {
+            Hooks._scenario.log(Status.FAIL, "Erreur saisie code postal");
+            Hooks._scenario.log(Status.FAIL, e.getMessage());
+        }
     }
 
-    @Et("^Je continue vers l'étape suivante$")
+    @And("Je continue vers l'étape suivante")
     public void je_continue_vers_l_etape_suivante() {
-        checkoutPage.clickContinue();
+        try {
+            checkoutPage.clickContinue();
+            Hooks._scenario.log(Status.PASS, "Cliqué sur Continue");
+        } catch (Exception e) {
+            Hooks._scenario.log(Status.FAIL, "Erreur clic Continue");
+            Hooks._scenario.log(Status.FAIL, e.getMessage());
+        }
     }
 
-    @Et("^Je finalise la commande$")
+    @And("Je finalise la commande")
     public void je_finalise_la_commande() {
-        checkoutPage.clickFinish();
+        try {
+            checkoutPage.clickFinish();
+            Hooks._scenario.log(Status.PASS, "Cliqué sur Finish");
+        } catch (Exception e) {
+            Hooks._scenario.log(Status.FAIL, "Erreur clic Finish");
+            Hooks._scenario.log(Status.FAIL, e.getMessage());
+        }
     }
 
-    @Alors("^La commande doit être complétée avec succès$")
+    @Then("La commande doit être complétée avec succès")
     public void la_commande_doit_etre_completee_avec_succes() {
-        Assert.assertTrue("La commande doit être complétée", 
-            checkoutPage.isCheckoutComplete());
+        try {
+            Assertions.assertTrue(checkoutPage.isCheckoutComplete(), "La commande doit être complétée");
+            Hooks._scenario.log(Status.PASS, "Commande complétée avec succès");
+        } catch (Throwable t) {
+            Hooks._scenario.log(Status.FAIL, "La commande n'est pas complétée");
+            Hooks._scenario.log(Status.FAIL, t.getMessage());
+            throw t;
+        }
     }
 
-    @Et("^Un message de confirmation doit être affiché$")
+    @And("Un message de confirmation doit être affiché")
     public void un_message_de_confirmation_doit_etre_affiche() {
-        Assert.assertTrue("Un message de confirmation doit être affiché", 
-            checkoutPage.isCheckoutComplete());
-        String message = checkoutPage.getCompleteMessage();
-        Assert.assertTrue("Le message doit contenir 'Thank you'", 
-            message.contains("Thank you"));
+        try {
+            Assertions.assertTrue(checkoutPage.isCheckoutComplete(), "Un message de confirmation doit être affiché");
+            String message = checkoutPage.getCompleteMessage();
+            Assertions.assertTrue(message.contains("Thank you"), "Le message doit contenir 'Thank you'");
+            Hooks._scenario.log(Status.PASS, "Message de confirmation validé");
+        } catch (Throwable t) {
+            Hooks._scenario.log(Status.FAIL, "Echec validation message de confirmation");
+            Hooks._scenario.log(Status.FAIL, t.getMessage());
+            throw t;
+        }
     }
 
-    @Alors("^Le checkout doit échouer$")
+    @Then("Le checkout doit échouer")
     public void le_checkout_doit_echouer() {
-        Assert.assertTrue("Le checkout doit échouer",
-            checkoutPage.isErrorMessageDisplayed() ||
-            checkoutPage.isCheckoutStepOneDisplayed());
+        try {
+            Assertions.assertTrue(checkoutPage.isErrorMessageDisplayed() || checkoutPage.isCheckoutStepOneDisplayed(), "Le checkout doit échouer");
+            Hooks._scenario.log(Status.PASS, "Checkout échoué comme attendu");
+        } catch (Throwable t) {
+            Hooks._scenario.log(Status.FAIL, "Le checkout n'a pas échoué comme attendu");
+            Hooks._scenario.log(Status.FAIL, t.getMessage());
+            throw t;
+        }
     }
-
-
 }
+
+
 

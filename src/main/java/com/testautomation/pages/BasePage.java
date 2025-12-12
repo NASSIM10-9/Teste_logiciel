@@ -14,7 +14,7 @@ public class BasePage {
     }
 
     protected void click(WebElement element) {
-        // Utiliser WebDriverWait directement sur l'élément
+
         org.openqa.selenium.support.ui.WebDriverWait wait = 
             new org.openqa.selenium.support.ui.WebDriverWait(driver, java.time.Duration.ofSeconds(20));
         wait.until(org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable(element));

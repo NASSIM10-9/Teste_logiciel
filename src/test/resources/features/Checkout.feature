@@ -4,10 +4,18 @@ Feature: Processus de checkout
   Je veux pouvoir finaliser ma commande
   Afin de compléter mon achat
 
+  Background:
+     Given Je suis sur la page de connexion
+     When Je saisis le nom d'utilisateur "standard_user"
+     And Je saisis le mot de passe "secret_sauce"
+     And Je clique sur le bouton de connexion
+     Then La connexion doit être réussie
+     When J'ajoute un article au panier
+     And Je vais sur la page du panier
+     And Je suis sur la page de checkout
+
   @Valid @CheckoutValid
   Scenario: Checkout avec informations valides
-    Given Je suis connecté avec des articles dans le panier
-    And Je suis sur la page de checkout
     When Je saisis le prénom "Jean"
     And Je saisis le nom "Dupont"
     And Je saisis le code postal "75001"
@@ -18,8 +26,6 @@ Feature: Processus de checkout
 
   @Invalid @CheckoutInvalid1
   Scenario: Checkout avec prénom vide
-    Given Je suis connecté avec des articles dans le panier
-    And Je suis sur la page de checkout
     When Je saisis le prénom ""
     And Je saisis le nom "Dupont"
     And Je saisis le code postal "75001"
@@ -30,8 +36,6 @@ Feature: Processus de checkout
 
   @Invalid @CheckoutInvalid2
   Scenario: Checkout avec code postal invalide
-    Given Je suis connecté avec des articles dans le panier
-    And Je suis sur la page de checkout
     When Je saisis le prénom "Jean"
     And Je saisis le nom "Dupont"
     And Je saisis le code postal "ABC"

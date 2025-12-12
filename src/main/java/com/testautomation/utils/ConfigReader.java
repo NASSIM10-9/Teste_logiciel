@@ -16,7 +16,7 @@ public class ConfigReader {
         } catch (IOException e) {
             System.err.println("Erreur lors du chargement du fichier de configuration: " + e.getMessage());
             properties = new Properties();
-            // Valeurs par défaut
+
             properties.setProperty("base.url", "https://example.com");
             properties.setProperty("browser", "chrome");
             properties.setProperty("timeout", "20");

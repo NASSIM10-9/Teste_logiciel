@@ -21,6 +21,9 @@ public class LoginPage extends BasePage {
     @FindBy(className = "app_logo")
     private WebElement appLogo;
 
+    @FindBy(className = "title")
+    private WebElement pageTitle;
+
     public LoginPage() {
         super();
     }
@@ -52,10 +55,8 @@ public class LoginPage extends BasePage {
     }
 
     public boolean isLoginSuccessful() {
-        // Après login réussi, on est redirigé vers la page produits
-        // Vérifier qu'on n'est plus sur la page de login
         try {
-            return !isElementDisplayed(loginButton) || driver.getCurrentUrl().contains("/inventory.html");
+            return isElementDisplayed(pageTitle);
         } catch (Exception e) {
             return false;
         }
